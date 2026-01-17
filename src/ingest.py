@@ -1,11 +1,10 @@
 import os
 
 from dotenv import load_dotenv
-from langchain_postgres import PGVector
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_core.documents import Document
-from langchain_openai import OpenAIEmbeddings
-from validators.enviroment_variables_validator import validate_variables
+from utils.enviroment_variables_validator import validate_variables
+from utils.pgvector_creator import initialize_pgvector_store
 import psycopg2
 
 
@@ -27,14 +26,12 @@ def ingest_pdf():
         if not docs:
             raise FileNotFoundError(f"Nenhum documento foi carregado do caminho especificado: {PDF_PATH}")
 
-        embeddings = OpenAIEmbeddings(model=os.getenv("OPENAI_EMBEDDING_MODEL"))
-
         text_splitter = _text_splitter(docs)
         
         enriched_documents, ids = _prepare_documents_with_metadata(text_splitter)
 
-        _store_documents(enriched_documents, ids, embeddings)
-
+        _store_documents(enriched_documents, ids)
+        
     except EnvironmentError as e:
         print(e)
         raise SystemExit("Variáveis de ambiente inválidas ou ausentes.")
@@ -86,20 +83,14 @@ def _prepare_documents_with_metadata(text_splitter):
     return enriched_documents, ids
 
 
-def _store_documents(enriched_documents, ids, embeddings):
+def _store_documents(enriched_documents, ids):
     """Armazena os documentos enriquecidos no banco de dados PostgreSQL usando PGVector.
     Args:
         enriched_documents: Lista de documentos enriquecidos.
         ids: Lista de IDs dos documentos.
-        embeddings: Modelo de embeddings para converter texto em vetores.
     """
 
-    store = PGVector(
-        embeddings=embeddings,
-        collection_name=os.getenv("PG_VECTOR_COLLECTION_NAME"),
-        connection=os.getenv("DATABASE_URL"),
-        use_jsonb=True
-    )
+    store = initialize_pgvector_store()
 
     try:
         _cleanup_collection(store)

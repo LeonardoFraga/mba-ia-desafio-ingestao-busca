@@ -1,3 +1,6 @@
+from utils.pgvector_creator import initialize_pgvector_store
+from langchain.prompts import PromptTemplate
+
 PROMPT_TEMPLATE = """
 CONTEXTO:
 {contexto}
@@ -25,5 +28,11 @@ PERGUNTA DO USUÁRIO:
 RESPONDA A "PERGUNTA DO USUÁRIO"
 """
 
-def search_prompt(question=None):
-    pass
+def search_prompt(question=None)-> PromptTemplate:
+    store = initialize_pgvector_store()
+    
+    context_docs = store.similarity_search(question, k=10)
+    context_text = "\n".join([doc.page_content for doc in context_docs])
+
+    prompt = PromptTemplate.from_template(PROMPT_TEMPLATE)
+    return prompt.partial(contexto=context_text)

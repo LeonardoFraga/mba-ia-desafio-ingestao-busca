@@ -34,3 +34,37 @@ docker compose up -d
   ```
 
 Isso processará o PDF especificado em `PDF_PATH`, dividirá o texto em chunks, gerará embeddings e armazenará no banco de dados.
+
+### 5. Executar o Chat
+- Se estiver em Mac ou Linux:
+  ```
+  make chat
+  ```
+- Caso contrário:
+  ```
+  python3 src/chat.py
+  ```
+
+Isso iniciará um chat interativo para fazer perguntas baseadas nos documentos ingeridos.
+
+## Exemplos de Uso
+
+Aqui estão alguns exemplos de perguntas que você pode fazer no chat, baseadas nos documentos ingeridos:
+
+- **Pergunta:** Qual o faturamento da Empresa SuperTechIABrazil?  
+  **Resposta esperada:** Faturamento: R$ 10.000.000,00
+
+- **Pergunta:** Qual o faturamento da empresa Alfa IA Indústria?  
+  **Resposta esperada:** Faturamento: R$ 548.789.613,65
+
+- **Pergunta:** Qual o ano de fundação da Atlas Biotech S.A.?  
+  **Resposta esperada:** Ano de fundação: 2023
+
+- **Pergunta:** Qual o faturamento da empresa Cobalto Turismo S.A.?  
+  **Resposta esperada:** Faturamento: R$ 4.633.528.005,95
+
+- **Pergunta:** Em qual ano a empresa Brava Cosméticos S.A. foi fundada?  
+  **Resposta esperada:** Ano de fundação: 2021
+
+- **Pergunta:** Qual o faturamento e o ano de fundação da empresa Alfa Tecnologia Holding?  
+  **Resposta esperada:** Faturamento: R$ 66.776.155,12; Ano de fundação: 1950
